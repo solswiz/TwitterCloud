@@ -1,0 +1,67 @@
+body{
+    width:100%;
+    height:auto;
+    background-image:url('/assets/twitclouds.jpg');
+    background-size:100%;
+}
+
+.logo-container {
+    padding-top: 11em;
+    text-align: right;
+}
+
+.right-column{
+    color:#ffffff;
+    text-shadow:2px 2px 3px #000000;
+    font-size:1.2em;
+}
+
+.twitter-form {
+    color:#ffffff;
+    font-size: 2em;
+    font-weight: bold;
+    float:left;
+    position: relative;
+    top: -100px;
+    left:0px;
+}
+
+.twitter-form > form {
+    display:block;
+    width: 40%;
+    margin: 1em auto;
+   text-align: center;
+   float: right;
+   padding-right: 10%;
+}
+
+.twitter-form .submissions {
+   display:block;
+   width: 30%;
+   margin: 1em auto;
+   float:left;
+   margin-left: 17%;
+}
+
+.submission-list {
+   margin-left: 17%;
+   margin-top: 7px;
+}
+
+.submission-list li {
+   margin-top: 7px;
+}
+
+.twitter-form input[type=text]{
+    height: 35px;
+    font-size: 1.1em;
+}
+
+.twitter-form .btn-large {
+    margin-top: 1em;
+}
+
+h2.error-message {
+   text-align: center;
+   color: #B30000;
+}
