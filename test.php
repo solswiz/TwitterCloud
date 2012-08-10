@@ -1,3 +1,107 @@
+<!DOCTYPE html>
+<?php
+//error_reporting(0);
+
+//Tweet & Retweet Count Starts here
+
+$handl=$_POST["handle"];
+$opts = array(
+  'http'=>array(
+		'method'=>"GET",
+		'header'=>
+			"Accept-language: en\r\n".
+			"Content-Type: application/json\r\n"
+
+  	    )
+	);
+
+$context = stream_context_create($opts);
+
+$tjson = file_get_contents("http://api.twitter.com/1/statuses/user_timeline/".$handl.".json?count=1000", false, $context);
+$str = json_decode($tjson, true); 
+
+$tjson = file_get_contents("http://api.twitter.com/1/statuses/retweeted_by_user.json?screen_name=multunus&count=100", false, $context);
+
+$str1 = json_decode($tjson, true);
+
+$p=0;
+$fl=array();
+
+$t_count = count($str);
+$t_count1=count($str1);
+$t_c=$t_count+$t_count1;
+
+
+	for($i=$t_count;$i<$t_c;$i++)
+	{
+		$str[$i]=$str1[$p];
+		$p++;
+	}
+
+
+	for($k=0;$k<$t_c;$k++)
+	  {
+
+		if($k<$t_count)
+		{
+			$words = explode(" ", $str[$k]['text']);
+		}
+		else
+		{
+			$words = explode(" ", $str[$k]['retweeted_status']['text']);			
+		}
+
+
+		$flo = count($words);
+		$flo1=$flo;
+
+
+		for($ck=0;$ck<$flo1;$ck++)
+			{
+				if($words[$ck]=="")
+				{
+					$flo--;
+				}
+	
+			}
+	
+		$fl[$k]['cnt']=$flo;
+		$fl[$k]['rpt']=1;
+
+		if(isset($str[$k]['in_reply_to_user_id_str'])||isset($str[$k]['in_reply_to_status_id_str'])||isset($str[$k]['retweeted_status']['in_reply_to_user_id_str'])||isset($str[$k]['retweeted_status']['in_reply_to_screen_name'])||isset($str[$k]['in_reply_to_status_id_str']))
+			{
+	
+				$fl[$k]['cnt']=0;
+				$fl[$k]['rpt']=0;
+	
+			}
+
+	
+
+	  }
+
+//Tweet & Retweet Count Ends Here
+
+
+
+
+//Array Preparation
+ for($k=0;$k<$t_c;$k++)
+	{
+
+		for($j=$k-1;$j>=0;$j--)
+		{
+			if($fl[$j]['cnt']==$fl[$k]['cnt']&&$fl[$k]['cnt']!=0)
+			{
+				$fl[$j]['rpt']++;
+				$fl[$k]['cnt']=0;
+				$fl[$k]['rpt']=0;
+			}		
+
+		}
+	}
+
+?>
 <html>
  <head>
     <title>Twitter Challenge</title>
@@ -14,6 +118,8 @@
       $('#xpower').tagcloud({type:'sphere',height:500,sizemin:12,sizemax:100,power:.6,colormin:"f81908",colormax:"2f29ff"});
       });
     </script>
+
+
 
   </head>
 
@@ -33,124 +139,20 @@
 	  <ul id = "xpower" class="xmpl" >
 
 <?php
-error_reporting(0);
-
-//Tweet Count Starts here
-
-$handl=$_POST["handle"];
-$tjson = file_get_contents("http://twitter.com/status/user_timeline/".$handl.".json?count=1000", true);
-$str = json_decode($tjson, true); 
-
-$fl=array();
-$t_count = count($str);
-
-$k_e=0;
-
- for($k=0;$k<$t_count;$k++)
-  {
-
-	
-	$words = explode(" ", $str[$k][text]);
-
-	$flo = count($words);
-	$flo1=$flo;
-
-	for($ck=0;$ck<$flo1;$ck++)
-		{
-			if($words[$ck]=="")
-			{
-				$flo--;
-			}
-
-		}
-	
-	$fl[$k][cnt]=$flo;
-	$fl[$k][rpt]=1;
-
-	if(isset($str[$k][in_reply_to_user_id_str])||isset($str[$k][in_reply_to_status_id_str]))
-	{
-
-	$fl[$k][cnt]=0;
-	$fl[$k][rpt]=0;
-	
-	}
-	
-	$k_e=$k;
-  }
-
-//Tweet Count Ends Here
-
-
-//Re-tweet Count Starts here
-
-$tjson1 = file_get_contents("http://api.twitter.com/1/statuses/retweeted_by_user.json?screen_name=".$handl."&count=40", true);
-$strh1 = json_decode($tjson1, true);
-$t_count1 = count($strh1);
-$t_cnt=$t_count+$t_count1;
-for($k=0;$k<$t_count1;$k++)
-  {
-
-	
-	$words = explode(" ", $strh1[$k][retweeted_status][text]);
-	
-	$flo = count($words);
-	$flo1= $flo;
-	
-	for($ck=0;$ck<$flo1;$ck++)
-		{
-			if($words[$ck]=="")
-			{
-				$flo--;
-			}
-
-		}
-	$kch=$k+$k_e+1;
-	$fl[$kch][cnt]=$flo;
-	$fl[$kch][rpt]=1;
-
-	if(isset($strh1[$k][retweeted_status][in_reply_to_user_id_str])||isset($strh1[$k][retweeted_status][in_reply_to_screen_name])||isset($strh1[$k][in_reply_to_status_id_str]))
-	{
-
-	$fl[$kch][cnt]=0;
-	$fl[$kch][rpt]=0;
-	
-	}
-
-  }
-
-// Re-Tweet Count Ends here
-
-//Array Preparation
- for($k=0;$k<$t_cnt;$k++)
-	{
-
-		for($j=$k-1;$j>=0;$j--)
-		{
-			if($fl[$j][cnt]==$fl[$k][cnt]&&$fl[$k][cnt]!=0)
-			{
-				$fl[$j][rpt]++;
-				$fl[$k][cnt]=0;
-				$fl[$k][rpt]=0;
-			}		
-
-		}
-	}
-
-
 //List Display Starts here  
- for($rt=70;$rt>0;$rt--) 
+ for($rt=40;$rt>0;$rt--) 
 	{
 	    for($r=0;$r<$t_count;$r++)
 	     {
-		if($fl[$r][rpt]==$rt)
+		if($fl[$r]['rpt']==$rt)
 		{
-			echo "<li value=".$fl[$r][rpt].">".$fl[$r][cnt]."</li>\n";	
+			echo "<li value=".$fl[$r]['rpt'].">".$fl[$r]['cnt']."</li>\n";	
 		}
 	     }
 	}
 
 ?>
- </ul>
+	  </ul>
 	</div>
         </div>
       </div>
