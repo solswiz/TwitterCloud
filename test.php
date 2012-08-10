@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-//error_reporting(0);
+
 
 //Tweet & Retweet Count Starts here
 
@@ -86,6 +86,9 @@ $t_c=$t_count+$t_count1;
 
 
 //Array Preparation
+
+$max=0;
+
  for($k=0;$k<$t_c;$k++)
 	{
 
@@ -96,9 +99,18 @@ $t_c=$t_count+$t_count1;
 				$fl[$j]['rpt']++;
 				$fl[$k]['cnt']=0;
 				$fl[$k]['rpt']=0;
+
+				if($max < $fl[$j]['rpt'])
+					{
+					 	$max = $fl[$j]['rpt'];
+
+					}
+			
 			}		
 
 		}
+
+		
 	}
 
 ?>
@@ -140,7 +152,8 @@ $t_c=$t_count+$t_count1;
 
 <?php
 //List Display Starts here  
- for($rt=40;$rt>0;$rt--) 
+
+ for($rt=$max;$rt>0;$rt--) 
 	{
 	    for($r=0;$r<$t_count;$r++)
 	     {

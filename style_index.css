@@ -1,7 +1,7 @@
 body{
     width:100%;
     height:auto;
-    background-image:url('/assets/twitclouds.jpg');
+    background-image:url('outputbg.jpg');
     background-size:100%;
 }
 
@@ -58,7 +58,7 @@ body{
 }
 
 .twitter-form .btn-large {
-    margin-top: 1em;
+    margin-top: -8px;
 }
 
 h2.error-message {
